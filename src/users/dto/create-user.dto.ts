@@ -12,6 +12,10 @@ export class CreateUserDto {
   @IsNotEmpty({message:"password is required"})
   password: string;
   
+  @IsString()
+  @IsNotEmpty()
+  contactNumber: string;
+
   @IsEnum(["admin", "user"], { message: "role must be either admin or user" })
   role: "admin" | "user";
 

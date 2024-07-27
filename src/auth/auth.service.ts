@@ -35,7 +35,7 @@ export class AuthService {
   accessTokenExpirationChecker(token){
     const decoded = this.tokenDecoder(token)
     if(Date.now() < decoded.exp * 1000) {
-      return token
+      return "Token is still valid"
     } else {
       return this.generateAccessToken({refreshToken:decoded.refreshToken})
     }

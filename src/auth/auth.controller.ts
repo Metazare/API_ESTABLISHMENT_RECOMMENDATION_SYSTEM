@@ -1,11 +1,13 @@
-import { Controller, Post, UseGuards,Get, Req,Res} from '@nestjs/common';
+import { Controller, Post, UseGuards,Get, Req,Res ,BadRequestException} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './guards/local.guard';
 import { Request ,Response } from 'express';
 import { JwtAuthGuard } from './guards/Jwt.guard';
+import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private UserService:UsersService) {}
 
   @Post('login')
   @UseGuards(LocalGuard)
@@ -18,7 +20,6 @@ export class AuthController {
     const accessToken = this.authService.generateAccessToken(
       {refreshToken}
     );
-
     // Set the refresh token in an HTTP-only cookie
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -28,6 +29,19 @@ export class AuthController {
     });
     
     return accessToken;
+  }
+
+  @Post('register')
+  async register(@Req() req: Request){
+    try{
+      await this.UserService.create(req.body as CreateUserDto)
+      return {
+        message:"User created successfully"
+      }   
+    }catch(e){
+      console.log(e)
+      throw new BadRequestException(e.message)
+    }
   }
 
   @Get('status')
@@ -40,12 +54,5 @@ export class AuthController {
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('refreshToken');
     return { message: 'Loggedout' };
-  }
-
-  @Get('sample')
-  sample(){
-    return this.authService.generateAccessToken({
-      sample:"Sample"
-    })
   }
 }

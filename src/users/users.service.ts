@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,15 +11,25 @@ export class UsersService {
   constructor( @InjectModel(User.name) private userModel: Model<User>){}
   
   create(createUserDto: CreateUserDto) {
-    const password =  hashPassword(createUserDto.password);
-    const newUser = new this.userModel({...createUserDto,createdAt:Date.now(),password:password});
-    return newUser.save();
+    return new Promise((resolve, reject) => {
+      this.findOne(createUserDto.email,"email").then((user) => {
+        if(user) {
+          reject(new Error("User already exists"));
+        } else {
+          const password =  hashPassword(createUserDto.password);
+          const newUser = new this.userModel({...createUserDto,createdAt:Date.now(),password:password});
+          resolve(newUser.save());
+        }
+      });
+    });
   }
+
   findAll() {
     const users = this.userModel.find({}, { password: 0 });
     return users;
   }
-  findOne(payload: string,type:string) {
+
+  findOne(payload: string, type:string) {
     switch(type){
       case "email": // find user by email
         return this.userModel.findOne({email:payload});
@@ -33,6 +43,7 @@ export class UsersService {
   update(id: string, updateUserDto: UpdateUserDto) {
     return this.userModel.findByIdAndUpdate(id,updateUserDto,{new:true})
   }
+
   remove(id: string) {
     return this.userModel.findByIdAndDelete(id);
   }
