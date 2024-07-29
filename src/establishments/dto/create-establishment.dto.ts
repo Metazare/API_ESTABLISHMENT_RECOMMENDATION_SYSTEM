@@ -10,4 +10,5 @@ export class CreateEstablishmentDto {
   close: string;
   facebook: string;
   creatorId: string;
+  views: number;
 }

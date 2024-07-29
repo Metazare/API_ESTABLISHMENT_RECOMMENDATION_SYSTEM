@@ -27,10 +27,12 @@ export class AuthService {
   generateAccessToken (payload:Object) {
     return this.jwtService.sign(payload);
   }
+  
   // Decode the token
   tokenDecoder(token){
     return this.jwtService.decode(token)
   }
+
   // Check if the access token is expired if not return the token else generate a new access token
   accessTokenExpirationChecker(token){
     const decoded = this.tokenDecoder(token)

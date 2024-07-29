@@ -34,6 +34,9 @@ export class Establishments {
 
   @Prop({ required: true, unique: false })
   creatorId: string;
+
+  @Prop({ required: true, unique: false, default: 0 })
+  views: number;
 }
 
 export const EstablishmentsSchema = SchemaFactory.createForClass(Establishments);
