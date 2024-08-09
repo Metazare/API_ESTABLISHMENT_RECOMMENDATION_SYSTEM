@@ -12,10 +12,10 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalGuard)
   async login(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
-    const { name, email,role } = req.user as { name: string, email: string ,role:string};
+    const {_id} = req.user as { _id:string};
     
     const refreshToken = await this.authService.generateRefreshToken(
-      {name, email, role}
+      {_id}
     );
     const accessToken = this.authService.generateAccessToken(
       {refreshToken}
@@ -28,7 +28,10 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     
-    return accessToken;
+    return {
+      accessToken,
+      userId:_id
+    };
   }
 
   @Post('register')
@@ -46,8 +49,24 @@ export class AuthController {
 
   @Get('status')
   @UseGuards(JwtAuthGuard)
-  status(@Req() req: Request){
-    return req.user
+  async status(@Req() req: Request){
+    try{
+      const accessToken = req.user 
+      const refreshTokenContent = this.authService.tokenDecoder(this.authService.tokenDecoder(accessToken).refreshToken)
+      console.log(refreshTokenContent)
+      return {
+        accessToken:accessToken,
+        userId:refreshTokenContent._id
+      } 
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
+  }
+
+  @Get('wew')
+  // @UseGuards(JwtAuthGuard)
+  async wew(){
+    return "wew"
   }
 
   @Get('logout')

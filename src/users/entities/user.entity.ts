@@ -7,4 +7,5 @@ export class User {
   name: string;
   role: string;
   image: string;
+  preferences:string[];
 }

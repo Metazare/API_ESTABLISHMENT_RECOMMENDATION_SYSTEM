@@ -18,6 +18,8 @@ export class User {
   image:string;
   @Prop({required:false,unique:false})
   createdAt:Date;
+  @Prop({required:false,unique:false})
+  preferences:string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

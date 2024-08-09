@@ -5,12 +5,13 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/Jwt.guard';
 import { Request } from 'express';
 
-@UseGuards(JwtAuthGuard)
+
 @Controller('establishments')
 export class EstablishmentsController {
   constructor(private readonly establishmentsService: EstablishmentsService) {}
-
+  
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(@Req() req: Request) {
     try {
       let result = await this.establishmentsService.create(req.body);
@@ -48,15 +49,13 @@ export class EstablishmentsController {
       console.warn("Error", error);
     }
   }
-
+  
   @Get('recommendation')
   async recommendation(@Req() req: Request) {
+    const {type,barangay,search,currentPage} = req.body as { type: string[],barangay:string[],search: string, currentPage: number};
     try {
-      let result = await this.establishmentsService.recommendation(["restaurant"]);
-      return {
-        data : result,
-        accessToken : req.user
-      };
+      let result = await this.establishmentsService.recommendation(type,barangay,search,currentPage);
+      return result
     } catch (error) {
       console.warn("Error", error);
     }
@@ -73,6 +72,7 @@ export class EstablishmentsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.establishmentsService.remove(+id);
   }
