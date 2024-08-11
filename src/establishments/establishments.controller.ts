@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Req, Put } from '@nestjs/common';
 import { EstablishmentsService } from './establishments.service';
 import { UpdateEstablishmentDto } from './dto/update-establishment.dto';
 import { UseGuards } from '@nestjs/common';
@@ -50,25 +50,52 @@ export class EstablishmentsController {
     }
   }
   
-  @Get('recommendation')
+  @Post('recommendation')
   async recommendation(@Req() req: Request) {
-    const {type,barangay,search,currentPage} = req.body as { type: string[],barangay:string[],search: string, currentPage: number};
+    const {type,barangay,search,currentPage} = await req.body as { type: string[],barangay:string[],search: string, currentPage: number};
+    console.log(type,barangay,search,currentPage)
     try {
       let result = await this.establishmentsService.recommendation(type,barangay,search,currentPage);
+      console.log(result)
       return result
     } catch (error) {
       console.warn("Error", error);
     }
   }
 
+  @Get('owner/:id')
+  @UseGuards(JwtAuthGuard)
+  async myEstablishment(@Req() req: Request, @Param('id') id: string) {
+    try {
+      let result = await this.establishmentsService.myEstablishment(id);
+      return {
+        data : result,
+        accessToken : req.user
+      };
+    } catch (error) {
+      console.warn("Error", error);
+    }
+  }
+
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.establishmentsService.findOne(+id);
+    return this.establishmentsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEstablishmentDto: UpdateEstablishmentDto) {
-    return this.establishmentsService.update(+id, updateEstablishmentDto);
+  @UseGuards(JwtAuthGuard)
+  async update(@Param('id') id: string,@Req() req: Request) {
+    try {
+      let result = await this.establishmentsService.update(id, req.body as UpdateEstablishmentDto);
+      return {
+        data : result,
+        accessToken : req.user
+      };
+    } catch (error) {
+      console.warn("Error", error);
+    }
+    return ;
   }
 
   @Delete(':id')

@@ -30,6 +30,7 @@ export class AuthService {
   
   // Decode the token
   tokenDecoder(token){
+    console.log(this.jwtService.decode(token))
     return this.jwtService.decode(token)
   }
 
@@ -37,7 +38,7 @@ export class AuthService {
   accessTokenExpirationChecker(token){
     const decoded = this.tokenDecoder(token)
     if(Date.now() < decoded.exp * 1000) {
-      return "Token is still valid"
+      return token
     } else {
       return this.generateAccessToken({refreshToken:decoded.refreshToken})
     }

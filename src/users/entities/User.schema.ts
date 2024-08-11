@@ -10,8 +10,6 @@ export class User {
   email:string;
   @Prop({required:true,unique:false})
   contactNumber:string;
-  @Prop({required:false,unique:false})
-  establishments:string[]
   @Prop({required:true,unique:false})
   role:string;
   @Prop({required:false,unique:false})

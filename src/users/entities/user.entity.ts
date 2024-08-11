@@ -3,7 +3,6 @@ export class User {
   email: string;
   password: string;
   contactNumber: string; 
-  establishments: string[];
   name: string;
   role: string;
   image: string;

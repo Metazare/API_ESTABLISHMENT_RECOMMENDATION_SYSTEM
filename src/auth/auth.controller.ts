@@ -17,7 +17,7 @@ export class AuthController {
     const refreshToken = await this.authService.generateRefreshToken(
       {_id}
     );
-    const accessToken = this.authService.generateAccessToken(
+    const accessToken = await this.authService.generateAccessToken(
       {refreshToken}
     );
     // Set the refresh token in an HTTP-only cookie
@@ -35,14 +35,28 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Req() req: Request){
+  async register(@Req() req: Request, @Res({ passthrough: true }) response: Response){
     try{
-      await this.UserService.create(req.body as CreateUserDto)
+      const user = await this.UserService.create(req.body as CreateUserDto) as {_id:string};
+      const _id = user._id.toString();
+      const refreshToken = await this.authService.generateRefreshToken(
+        {_id}
+      );
+      const accessToken = await this.authService.generateAccessToken(
+        {refreshToken}
+      );
+      // Set the refresh token in an HTTP-only cookie
+      response.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false, // Set to true in production with HTTPS
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
       return {
-        message:"User created successfully"
+        accessToken,
+        userId:user._id
       }   
     }catch(e){
-      console.log(e)
       throw new BadRequestException(e.message)
     }
   }
@@ -51,23 +65,18 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async status(@Req() req: Request){
     try{
-      const accessToken = req.user 
-      const refreshTokenContent = this.authService.tokenDecoder(this.authService.tokenDecoder(accessToken).refreshToken)
-      console.log(refreshTokenContent)
+      const accessToken = req.user
+      const refreshTokenContent = await this.authService.tokenDecoder(this.authService.tokenDecoder(accessToken).refreshToken)
       return {
         accessToken:accessToken,
         userId:refreshTokenContent._id
       } 
     }catch(e){
+      console.log(e)
       throw new BadRequestException(e.message)
     }
   }
 
-  @Get('wew')
-  // @UseGuards(JwtAuthGuard)
-  async wew(){
-    return "wew"
-  }
 
   @Get('logout')
   async logout(@Res({ passthrough: true }) response: Response) {

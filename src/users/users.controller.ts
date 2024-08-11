@@ -17,14 +17,23 @@ export class UsersController {
   //   return this.usersService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   try {
-  //     return this.usersService.findOne(id,"id");
-  //   }catch(e){
-  //     throw new NotFoundException();
-  //   }
-  // }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    try {
+      const  response = await this.usersService.findOne(id,"id")
+      return {
+        _id:response._id,
+        email:response.email,
+        name:response.name,
+        createdAt:response.createdAt,
+        role:response.role,
+        image:response.image,
+        preferences:response.preferences
+      };
+    }catch(e){
+      throw new NotFoundException();
+    }
+  }
 
   // @Patch(':id')
   // @UseGuards(JwtAuthGuard)
