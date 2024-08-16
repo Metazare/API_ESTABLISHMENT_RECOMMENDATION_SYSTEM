@@ -1,21 +1,14 @@
-import { Controller, Get, Post, Body,Put, Patch, Param, Delete, NotFoundException, ParseIntPipe ,ValidationPipe, UseGuards} from '@nestjs/common';
+import { Controller, Get, Post,Req, Body,Put, Patch, Param, Delete, NotFoundException, ParseIntPipe ,ValidationPipe, UseGuards} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/Jwt.guard';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  // @Post()
-  // create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-  //   return this.usersService.create(createUserDto);
-  // }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
@@ -35,14 +28,9 @@ export class UsersController {
     }
   }
 
-  // @Patch(':id')
-  // @UseGuards(JwtAuthGuard)
-  // update(@Param('id') id: string, @Body(ValidationPipe) updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(id,updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string,) {
-  //   return this.usersService.remove(id);
-  // }
+  @Patch("preferences/:id")
+  @UseGuards(JwtAuthGuard)
+  updatePreferences(@Param('id') id: string, @Body() value: string[]) {
+    return this.usersService.updatePreferences(id, value);
+  }
 }

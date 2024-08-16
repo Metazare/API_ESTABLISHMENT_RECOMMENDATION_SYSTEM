@@ -95,12 +95,19 @@ export class EstablishmentsController {
     } catch (error) {
       console.warn("Error", error);
     }
-    return ;
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: string) {
-    return this.establishmentsService.remove(+id);
+  async remove(@Param('id') id: string,@Req() req: Request) {
+    try {
+      let result = await this.establishmentsService.remove(id)
+      return {
+        data : result,
+        accessToken : req.user
+      };
+    } catch (error) {
+      console.warn("Error", error);
+    }
   }
 }

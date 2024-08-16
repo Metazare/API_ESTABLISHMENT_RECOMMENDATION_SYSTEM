@@ -8,8 +8,8 @@ import { InjectModel } from '@nestjs/mongoose';
 export class FavoritesService {
   constructor( @InjectModel(Favorites.name) private favoritesModel: Model<Favorites>){}
 
-  create(createEstablishmentDto: CreateFavoriteDto) {
-    const newFavorite = new this.favoritesModel({...createEstablishmentDto,createdAt:Date.now()});
+  create(createFavoriteDto: CreateFavoriteDto) {
+    const newFavorite = new this.favoritesModel({...createFavoriteDto,createdAt:Date.now()});
     return newFavorite.save();
   }
 
@@ -20,6 +20,11 @@ export class FavoritesService {
   findAll() {
     return this.favoritesModel.find();
   }
+  
+  findMyFavorites(id: string) {
+    return this.favoritesModel.find({ userId: id });
+  }
+
 
   remove(id: number) {
     return this.favoritesModel.findByIdAndDelete(id);

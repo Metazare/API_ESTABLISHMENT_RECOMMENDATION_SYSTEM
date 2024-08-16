@@ -92,7 +92,7 @@ export class EstablishmentsService {
     return this.establishmentsModel.findByIdAndUpdate(id,updateEstablishmentDto,{new:true});
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.establishmentsModel.findByIdAndDelete(id);
   }
 }

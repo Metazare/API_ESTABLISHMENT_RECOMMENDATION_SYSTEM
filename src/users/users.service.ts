@@ -24,6 +24,23 @@ export class UsersService {
     });
   }
 
+  // update(id: string, updateUserDto: UpdateUserDto) {
+  //   return this.userModel.findByIdAndUpdate(id,updateUserDto);
+  // }
+  
+  async updatePreferences(id:string,value:any) {
+    const result = await this.userModel.findByIdAndUpdate(id,{preferences:value.preferences})
+    return {
+      _id:result._id,
+      email:result.email,
+      name:result.name,
+      createdAt:result.createdAt,
+      role:result.role,
+      image:result.image,
+      preferences:value.preferences
+    } ;
+  }
+
   findAll() {
     const users = this.userModel.find({}, { password: 0 });
     return users;
