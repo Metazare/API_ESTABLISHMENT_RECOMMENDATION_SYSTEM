@@ -6,12 +6,15 @@ import { Favorites, FavoritesSchema } from './entities/Favorites.schema';
 import { AuthModule } from 'src/auth/auth.module';
 import { EstablishmentsModule } from 'src/establishments/establishments.module';
 @Module({
-  imports:[
+  imports: [
     AuthModule,
-    MongooseModule.forFeature([{ 
-      name: Favorites.name, schema: FavoritesSchema 
-    }]),
-    EstablishmentsModule
+    MongooseModule.forFeature([
+      {
+        name: Favorites.name,
+        schema: FavoritesSchema,
+      },
+    ]),
+    EstablishmentsModule,
   ],
   controllers: [FavoritesController],
   providers: [FavoritesService],
