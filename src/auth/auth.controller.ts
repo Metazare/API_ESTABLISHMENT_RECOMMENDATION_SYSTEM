@@ -72,11 +72,12 @@ export class AuthController {
     }
   }
 
-  @Get('verifyAgain/:email')
+  @Get('verifyAgain/:id')
   async getNewVerificationLink(@Req() req: Request) {
     try {
-      const { email } = req.params;
-      const user = await this.UserService.findOne(email, 'email');
+      const { id } = req.params;
+      const user = await this.UserService.findOne(id, 'id');  
+      console.log(user);
       if (!user) throw new BadRequestException('User not found');
       if (user.isVerified)
         throw new BadRequestException('User already verified');
