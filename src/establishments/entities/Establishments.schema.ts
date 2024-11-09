@@ -1,10 +1,10 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class Establishments {
   @Prop({ required: true, unique: false })
-  name: string; 
-  
+  name: string;
+
   @Prop({ required: true, unique: false })
   description: string;
 
@@ -18,7 +18,7 @@ export class Establishments {
   phone: string;
 
   @Prop({ required: true, unique: false })
-  type : string;
+  type: string;
 
   @Prop({ required: true, unique: false })
   picture: [string];
@@ -37,6 +37,10 @@ export class Establishments {
 
   @Prop({ required: true, unique: false, default: 0 })
   views: number;
+
+  @Prop({ required: true, unique: false, default: false })
+  isVerified: boolean;
 }
 
-export const EstablishmentsSchema = SchemaFactory.createForClass(Establishments);
+export const EstablishmentsSchema =
+  SchemaFactory.createForClass(Establishments);

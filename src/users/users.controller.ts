@@ -11,8 +11,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/Jwt.guard';
 import { Request } from 'express';
 
@@ -20,11 +18,23 @@ import { Request } from 'express';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findAll(@Req() req: Request) {
+    try {
+      const users = await this.usersService.findAll();
+      return {
+        data: users,
+        accessToken: req.user,
+      };
+    } catch (error) {
+      console.warn('Error', error);
+    }
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try {
       const response = await this.usersService.findOne(id, 'id');
-      console.log(response);
       return {
         _id: response._id,
         email: response.email,

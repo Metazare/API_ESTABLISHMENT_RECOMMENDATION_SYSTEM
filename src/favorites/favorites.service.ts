@@ -6,10 +6,15 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class FavoritesService {
-  constructor( @InjectModel(Favorites.name) private favoritesModel: Model<Favorites>){}
+  constructor(
+    @InjectModel(Favorites.name) private favoritesModel: Model<Favorites>,
+  ) {}
 
   create(createFavoriteDto: CreateFavoriteDto) {
-    const newFavorite = new this.favoritesModel({...createFavoriteDto,createdAt:Date.now()});
+    const newFavorite = new this.favoritesModel({
+      ...createFavoriteDto,
+      createdAt: Date.now(),
+    });
     return newFavorite.save();
   }
 
@@ -20,11 +25,10 @@ export class FavoritesService {
   findAll() {
     return this.favoritesModel.find();
   }
-  
+
   findMyFavorites(id: string) {
     return this.favoritesModel.find({ userId: id });
   }
-
 
   remove(id: number) {
     return this.favoritesModel.findByIdAndDelete(id);

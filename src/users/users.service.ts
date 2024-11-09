@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,6 +14,25 @@ import { hashPassword, comparePassword } from 'src/utils/bcrypt';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  async onModuleInit() {
+    // Function to create super admin on startup
+    const superAdmin = await this.userModel.findOne({ role: 'admin' });
+    if (!superAdmin) {
+      await this.createAdmin({
+        email: process.env.SUPER_ADMIN_EMAIL,
+        name: 'Super Admin',
+        password: process.env.SUPER_ADMIN_PASSWORD,
+        contactNumber: '09156626321',
+        role: 'admin',
+        image: '',
+        isVerified: true,
+      });
+      // console.log('Super Admin created');
+    } else {
+      console.log('Super Admin already exists');
+    }
+  }
 
   create(createUserDto: CreateUserDto) {
     return new Promise((resolve, reject) => {
@@ -21,6 +45,25 @@ export class UsersService {
             ...createUserDto,
             createdAt: Date.now(),
             password: password,
+          });
+          resolve(newUser.save());
+        }
+      });
+    });
+  }
+
+  createAdmin(createAdminDto: CreateUserDto) {
+    return new Promise((resolve, reject) => {
+      this.findOne(createAdminDto.email, 'email').then((user) => {
+        if (user) {
+          reject(new Error('User already exists'));
+        } else {
+          const password = hashPassword(createAdminDto.password);
+          const newUser = new this.userModel({
+            ...createAdminDto,
+            createdAt: Date.now(),
+            password: password,
+            role: 'admin',
           });
           resolve(newUser.save());
         }
@@ -86,7 +129,10 @@ export class UsersService {
   }
 
   findAll() {
-    const users = this.userModel.find({}, { password: 0 });
+    const users = this.userModel.find(
+      { role: { $ne: 'admin' } },
+      { password: 0 },
+    );
     return users;
   }
 
@@ -103,5 +149,12 @@ export class UsersService {
 
   remove(id: string) {
     return this.userModel.findByIdAndDelete(id);
+  }
+  verifyUser(id: string) {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      { isVerified: true },
+      { new: true },
+    );
   }
 }

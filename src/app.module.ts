@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule,ConfigService } from '@nestjs/config';
 import { EstablishmentsModule } from './establishments/establishments.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { FavoritesModule } from './favorites/favorites.module';
     FavoritesModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule {}

@@ -18,5 +18,6 @@ import { EstablishmentsModule } from 'src/establishments/establishments.module';
   ],
   controllers: [FavoritesController],
   providers: [FavoritesService],
+  exports: [FavoritesService],
 })
 export class FavoritesModule {}
