@@ -34,7 +34,7 @@ export class AuthService {
 
   sendVerificationEmail(email: string, id: string) {
     const htmlContent = ` <div style="max-width: 600px; margin: 20px auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-    <h2 style="text-align: center; color: #4CAF50;">Welcome to Marikina Destinations!</h2>
+    <h2 style="text-align: center; color: #4CAF50;">Welcome at Marikina</h2>
     <div style="margin-top: 20px; line-height: 1.6;">
         <p>Hello ${email},</p>
         <p>Welcome to @Marikina! Were thrilled to have you on board and can't wait to help you discover the best spots in Marikina City. Whether you're looking for hidden gems, local favorites, or must-see attractions, we've got you covered!</p>

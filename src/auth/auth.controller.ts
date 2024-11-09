@@ -62,6 +62,7 @@ export class AuthController {
       const user = (await this.UserService.create(
         req.body as CreateUserDto,
       )) as { _id: string; email: string; name: string };
+      await this.authService.sendVerificationEmail(user.email, user._id);
 
       return {
         userId: user._id,
