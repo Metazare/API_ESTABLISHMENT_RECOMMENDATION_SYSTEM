@@ -14,7 +14,7 @@ export class Establishments {
   @Prop({ required: true, unique: false })
   barangay: string;
 
-  @Prop({ required: true, unique: false })
+  @Prop({ required: false, unique: false })
   phone: string;
 
   @Prop({ required: true, unique: false })
@@ -29,7 +29,7 @@ export class Establishments {
   @Prop({ required: true, unique: false })
   close: string;
 
-  @Prop({ required: true, unique: false })
+  @Prop({ required: false, unique: false })
   facebook: string;
 
   @Prop({ required: true, unique: false })
